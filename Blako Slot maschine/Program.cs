@@ -13,14 +13,14 @@ namespace Blako_Slot_maschine
 
 
             Console.WriteLine("Welcome to Fruits Wars!!\n");
-            Console.WriteLine("To Play press tab Key");
+            Console.WriteLine("To Play press Spacebar Key");
             ConsoleKeyInfo key;
-            int ROWS = 3;
-            int COLS = 3;
-            int CREDIT = 20;
-            int balance;
-            int WININGS = 1;
-
+            const int ROWS = 3;
+            const int COLS = 3;
+            const int CREDIT = 100;
+            const int BET=3;
+            int balance = CREDIT;
+                       
             string framingGridSymbols = "+--";
             string framingGridCorners = "+";
             string framingGridVerticalLines = "|";
@@ -37,14 +37,14 @@ namespace Blako_Slot_maschine
             fruits.Add("\U0001F347");// Wein Trauben
             int indexList = fruits.Count;
             Random randomList = new Random();
-           
+
 
             do
             {
                 key = Console.ReadKey();
                 Console.WriteLine();
                 Console.Clear();
-
+              
                 for (int r = 0; r < ROWS; r++)
                 {
                     Console.Write(framingGridSymbols);
@@ -58,6 +58,7 @@ namespace Blako_Slot_maschine
 
                     for (int j = 0; j < COLS; j++)
                     {
+                        
                         slotsGrid[i, j] = fruits[randomList.Next(indexList)];
                         Console.Write(slotsGrid[i, j]);
                         Console.Write(framingGridVerticalLines);
@@ -71,21 +72,32 @@ namespace Blako_Slot_maschine
 
                 }
                 Console.WriteLine();
-
-                if (slotsGrid[2, 0] == slotsGrid[2, 1] && slotsGrid[2, 2] == slotsGrid[2, 0])
+                // All 3 Horizontal Lines Are Active
+                bool horizontalWinnings = false;
+                for (int r = 0; r < ROWS; r++)
                 {
-                    Console.WriteLine("Winner 3rd line : 1$");
-                    balance = CREDIT + WININGS;
-                    Console.WriteLine($"your balance is:{balance}$");
+                    
+                    if (slotsGrid[r, 0] ==  slotsGrid[r, 1] && slotsGrid[r, 2] == slotsGrid[r, 1])
+                    {
+                        horizontalWinnings = true;
+                        balance += BET;
+                        Console.WriteLine($"You win on line {r+1}");
+                        Console.WriteLine(balance);
+                    }
                 }
-                else
+                Console.WriteLine(horizontalWinnings);
+                
+                if (!horizontalWinnings)
                 {
-                    CREDIT--;
-                    Console.WriteLine($"your Balance is:{CREDIT}$");
+                   
+                    Console.WriteLine("You Lose ");
+                    balance -= BET;
+                    Console.WriteLine(balance);
+                    
                 }
+                
 
-
-            } while (CREDIT > 0 && key.Key == ConsoleKey.Tab);
+            } while (CREDIT > 0 && key.Key == ConsoleKey.Spacebar);
 
 
 
