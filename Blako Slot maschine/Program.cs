@@ -18,9 +18,9 @@ namespace Blako_Slot_maschine
             const int ROWS = 3;
             const int COLS = 3;
             const int CREDIT = 100;
-            const int BET=3;
+            const int BET = 3;
             int balance = CREDIT;
-                       
+
             string framingGridSymbols = "+--";
             string framingGridCorners = "+";
             string framingGridVerticalLines = "|";
@@ -44,7 +44,7 @@ namespace Blako_Slot_maschine
                 key = Console.ReadKey();
                 Console.WriteLine();
                 Console.Clear();
-              
+
                 for (int r = 0; r < ROWS; r++)
                 {
                     Console.Write(framingGridSymbols);
@@ -58,10 +58,11 @@ namespace Blako_Slot_maschine
 
                     for (int j = 0; j < COLS; j++)
                     {
-                        
+
                         slotsGrid[i, j] = fruits[randomList.Next(indexList)];
                         Console.Write(slotsGrid[i, j]);
                         Console.Write(framingGridVerticalLines);
+
                     }
                     Console.WriteLine();
                     for (int r = 0; r < ROWS; r++)
@@ -72,32 +73,130 @@ namespace Blako_Slot_maschine
 
                 }
                 Console.WriteLine();
+                // Center Line Winings
+                bool gameWinnings = false;
+                for (int r = 1; r <= 1; r++)
+                {
+                    bool winnings = true;
+                    string firstSymbol = slotsGrid[r, 1];
+
+                    for (int c = 0; c < COLS; c++)
+                    {
+                        if (slotsGrid[r, c] != firstSymbol)
+                        {
+                            winnings = false;
+                            break;
+
+                        }
+                    }
+                    if (winnings)
+                    {
+                        gameWinnings = true;
+                        balance += BET;
+                        Console.WriteLine($"you win on H-Line{r + 1}");
+                    }
+
+                }
                 // All 3 Horizontal Lines Are Active
-                bool horizontalWinnings = false;
+
                 for (int r = 0; r < ROWS; r++)
                 {
-                    
-                    if (slotsGrid[r, 0] ==  slotsGrid[r, 1] && slotsGrid[r, 2] == slotsGrid[r, 1])
+                    bool winnings = true;
+                    string firstSymbol = slotsGrid[r, 0];
+
+                    for (int c = 1; c < COLS; c++)
                     {
-                        horizontalWinnings = true;
+                        if (slotsGrid[r, c] != firstSymbol)
+                        {
+                            winnings = false;
+                            break;
+
+                        }
+                    }
+                    if (winnings)
+                    {
+                        gameWinnings = true;
                         balance += BET;
-                        Console.WriteLine($"You win on line {r+1}");
-                        Console.WriteLine(balance);
+                        Console.WriteLine($"you win on H-Line{r + 1}");
+                    }
+
+                }
+                // All 3 Vertical Lines lines Winnings
+                for (int c = 0; c < COLS; c++)
+                {
+                    bool winnings = true;
+                    string firstSymbol = slotsGrid[0, c];
+                    for (int r = 1; r < ROWS; r++)
+                    {
+                        if (slotsGrid[r, c] != firstSymbol)
+                        {
+                            winnings = false;
+                            break;
+
+                        }
+                    }
+                    if (winnings)
+                    {
+                        gameWinnings = true;
+                        balance += BET;
+                        Console.WriteLine($"you win on V| Line{c + 1}");
                     }
                 }
-                Console.WriteLine(horizontalWinnings);
-                
-                if (!horizontalWinnings)
-                {
-                   
-                    Console.WriteLine("You Lose ");
-                    balance -= BET;
-                    Console.WriteLine(balance);
-                    
-                }
-                
+                // left diagonal Line
+                bool diagonalLeftWinnings = true;
 
-            } while (CREDIT > 0 && key.Key == ConsoleKey.Spacebar);
+                for (int r = 1; r < ROWS; r++)
+                {
+                    string firstSymbol = slotsGrid[0, 0];
+                    if (slotsGrid[r, r] != firstSymbol)
+                    {
+                        diagonalLeftWinnings = false;
+                        break;
+
+                    }
+
+                }
+                if (diagonalLeftWinnings)
+                {
+                    gameWinnings = true;
+                    balance += BET;
+                    Console.WriteLine($"you win on Main diagonal Line");
+                }
+                // right diagonal Line
+                bool rightDiagonalWinnings = true;
+                for (int r = 1; r < ROWS; r++)
+                {
+                    string firstSymbol = slotsGrid[0, ROWS - 1];
+                    if (slotsGrid[r, ROWS - 1 - r] != firstSymbol)
+                    {
+                        rightDiagonalWinnings = false;
+                        break;
+
+                    }
+                }
+                if (rightDiagonalWinnings)
+                {
+                    gameWinnings = true;
+                    balance += BET;
+                    Console.WriteLine($"you win on Sekond diagonal Line");
+                }
+
+
+                if (gameWinnings)
+                {
+
+                    Console.WriteLine($"Your balance {balance} ");
+
+                }
+                else
+                {
+                    Console.WriteLine("you lose");
+                    balance -= BET;
+                    Console.WriteLine($"your balance {balance}");
+                }
+
+
+            } while (balance > 1 && key.Key == ConsoleKey.Spacebar);
 
 
 
