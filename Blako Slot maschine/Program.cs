@@ -11,44 +11,53 @@ namespace Blako_Slot_maschine
     {
         static void Main(string[] args)
         {
-
-
+            const int STANDARD_GRID = 3;
+            const int CREDIT = 1000;
+            const int BET_PER_LINE = 1;
+            bool winingIncrease = false;
             Console.WriteLine("Welcome to Fruits Wars!!\n");
-            Console.Write("[3x3=3] [5x5=5] [7x7=7] Grid");
+            Console.Write("[3x3=3] [5x5=5] Grid");
             Console.WriteLine("\tTake a option :");
+
             int userGridInput = int.Parse(Console.ReadLine());
-            Console.Write("[1Line=1],[3Lines=3],[6Lines=6],[8Lines=8]");
+            if (STANDARD_GRID != userGridInput)
+            {
+                Console.Write("[1Line=1],[5Lines=5],[10Lines=10],[12Lines=12]");
+                winingIncrease = true;
+            }
+            else
+            {
+
+                Console.Write("[1Line=1],[3Lines=3],[6Lines=6],[8Lines=8]");
+            }
+
             Console.WriteLine("\t How many Lines want you to play?:");
             string userPlayLines = Console.ReadLine();
+            int playerChoiseLines = Convert.ToInt32(userPlayLines);
             ConsoleKeyInfo key;
+            // list for the game standard or another one
+            List<int> standardGrid = new List<int> { 1, 3, 6, 8 };
+            List<int> extendedGrid = new List<int> { 1, 5, 10, 12 };
+            List<int> listGridSwitch = standardGrid;
 
-            int playerChoiseLine1 = Convert.ToInt32(userPlayLines);
-            int playerChoiseLine3 = Convert.ToInt32(userPlayLines);
-            int playerChoiseLine6 = Convert.ToInt32(userPlayLines);
-            int playerChoiseLine8 = Convert.ToInt32(userPlayLines);
-            int gameLines1 = 1;
-            int gameLines3 = 3;
-            int gameLines6 = 6;
-            int gameLines8 = 8;
+            int gameCenter = listGridSwitch[0];
+            int gameHorizontalLines = listGridSwitch[1];
+            int gameVerticalLines = listGridSwitch[2];
+            int gameDiagonalLines = listGridSwitch[3];
             int rows = userGridInput;
             int cols = userGridInput;
-            const int CREDIT = 100;
-            const int BET_PER_LINE = 1;
             int balance = CREDIT;
             int totalLines;
             int totalGameLines;
-            int centerLineGrid = 1;
-            int gridLinesChoices = userGridInput;
-            // Musst adapting the game based on user grid choise!!! this is in work and not Availible at Now! just the 3x3 grid is corect!(winning and Losses)
-
+            int centerLineGrid = 1;//For game1 plays center line 
+            
             string framingGridSymbols = "+--";
             string framingGridCorners = "+";
             string framingGridVerticalLines = "|";
-
+            // utf characters symbols
             Console.OutputEncoding = Encoding.UTF8;
 
             string[,] slotsGrid = new string[rows, cols];
-
             List<string> fruits = new List<string>();
             fruits.Add("\U0001F34E"); //red Aplle
             fruits.Add("\U0001F352"); // red cherys
@@ -61,42 +70,57 @@ namespace Blako_Slot_maschine
             switch (userPlayLines)
             {
                 case "1":
-                    gameLines1 = playerChoiseLine1;
-                    totalLines = 1;
-                    totalGameLines = 1;
+                    listGridSwitch = standardGrid;
+                    totalLines = listGridSwitch[0];
+                    totalGameLines = listGridSwitch[0];
                     break;
                 case "3":
-                    gameLines3 = playerChoiseLine3;
-                    totalLines = 3;
-                    totalGameLines = gameLines3;
+                    listGridSwitch = standardGrid;
+                    totalLines = listGridSwitch[1];
+                    totalGameLines = listGridSwitch[1];
                     break;
                 case "6":
-                    gameLines6 = playerChoiseLine6;
-                    totalLines = 6;
-                    totalGameLines = gameLines6;
+                    listGridSwitch = standardGrid;
+                    totalLines = listGridSwitch[2];
+                    totalGameLines = listGridSwitch[2];
                     break;
                 case "8":
-                    gameLines8 = playerChoiseLine8;
-                    totalLines = 8;
-                    totalGameLines = gameLines8;
+                    listGridSwitch = standardGrid;
+                    totalLines = listGridSwitch[3];
+                    totalGameLines = listGridSwitch[3];
+                    break;
+                case "5":
+                    listGridSwitch = extendedGrid;
+                    totalLines = listGridSwitch[1];
+                    totalGameLines = listGridSwitch[1];
+                    break;
+                case "10":
+                    listGridSwitch = extendedGrid;
+                    totalLines = listGridSwitch[2];
+                    totalGameLines = listGridSwitch[2];
+                    break;
+                case "12":
+                    listGridSwitch = extendedGrid;
+                    totalLines = listGridSwitch[3];
+                    totalGameLines = listGridSwitch[3];
                     break;
                 default:
                     Console.WriteLine("Next Time enter a valid Number! you play now on main line");
-                    gameLines1 = playerChoiseLine1;
+                    gameCenter = playerChoiseLines;
                     totalLines = 1;
-                    totalGameLines = gameLines1;
+                    totalGameLines = 1;
                     break;
 
 
             }
+
+            //game 1 just centerline 
             if (userGridInput == 5)
             {
                 centerLineGrid = userGridInput - 2;
-            }
-            if (userGridInput == 7)
-            {
-                centerLineGrid = userGridInput - 3;
-            }
+            }   
+
+
             Console.WriteLine("To Play press Spacebar Key");
 
 
@@ -139,7 +163,7 @@ namespace Blako_Slot_maschine
                 bool gameWinnings = false;
                 int betTotalLines = totalLines * BET_PER_LINE;
 
-                if (playerChoiseLine1 == gameLines1)
+                if (playerChoiseLines == gameCenter)
                 {
 
                     for (int r = centerLineGrid; r <= centerLineGrid; r++)
@@ -164,13 +188,14 @@ namespace Blako_Slot_maschine
                         }
 
                     }
+
                 }
                 // All  Horizontal Lines Are Active
-                if (playerChoiseLine1 != gameLines1)
+                if (playerChoiseLines != gameCenter)
                 {
 
 
-                    if (playerChoiseLine3 == gameLines3 || playerChoiseLine6 != gameLines3 || playerChoiseLine8 != gameLines3)
+                    if (playerChoiseLines == gameHorizontalLines || playerChoiseLines != gameHorizontalLines || playerChoiseLines != gameVerticalLines)
                     {
 
 
@@ -199,36 +224,44 @@ namespace Blako_Slot_maschine
                     }
                 }
                 // All  Vertical Lines lines Winnings
-                if (playerChoiseLine6 == gameLines6 || playerChoiseLine8 != gameLines6 && playerChoiseLine3 == gameLines6 ||playerChoiseLine8 != gameLines6)
+                if (playerChoiseLines != gameCenter)
                 {
 
-
-                    for (int c = 0; c < cols; c++)
+                    if (playerChoiseLines == gameVerticalLines || playerChoiseLines != gameDiagonalLines && playerChoiseLines == gameVerticalLines || playerChoiseLines != gameHorizontalLines)
                     {
-                        bool winnings = true;
-                        string firstSymbol = slotsGrid[0, c];
-                        for (int r = 1; r < rows; r++)
-                        {
-                            if (slotsGrid[r, c] != firstSymbol)
-                            {
-                                winnings = false;
-                                break;
 
-                            }
-                        }
-                        if (winnings)
+                        for (int c = 0; c < cols; c++)
                         {
-                            gameWinnings = true;
-                            balance += betTotalLines;
-                            Console.WriteLine($"you win on V| Line{c + 1}");
+                            bool winnings = true;
+                            string firstSymbol = slotsGrid[0, c];
+                            for (int r = 1; r < rows; r++)
+                            {
+                                if (slotsGrid[r, c] != firstSymbol)
+                                {
+                                    winnings = false;
+                                    break;
+
+                                }
+                            }
+                            if (winnings)
+                            {
+                                gameWinnings = true;
+                                balance += betTotalLines;
+                                Console.WriteLine($"you win on V| Line{c + 1}");
+                            }
+                            if (winingIncrease && winnings)
+                            {
+                                gameWinnings = true;
+                                balance += betTotalLines * 12;
+                                Console.WriteLine($"you  win  X12 Bonus on Vertical-Line {c+1}");
+                            }
                         }
                     }
                 }
                 // left diagonal Line
                 bool diagonalLeftWinnings = true;
-                if (playerChoiseLine8 == gameLines8)
+                if (playerChoiseLines == gameDiagonalLines)
                 {
-
 
                     for (int r = 1; r < rows; r++)
                     {
@@ -264,6 +297,12 @@ namespace Blako_Slot_maschine
                         gameWinnings = true;
                         balance += betTotalLines;
                         Console.WriteLine($"you win on Sekond diagonal Line");
+                    }
+                    if ( winingIncrease && rightDiagonalWinnings)
+                    {
+                        gameWinnings = true;
+                        balance += betTotalLines *12;
+                        Console.WriteLine($"you win on Sekond diagonal Line X12 Bonus");
                     }
                 }
 
