@@ -12,14 +12,27 @@ namespace Blako_Slot_maschine
         static void Main(string[] args)
         {
             const int STANDARD_GRID = 3;
+            const int DEAFAULT_MODE = 1;
             const int CREDIT = 1000;
             const int BET_PER_LINE = 1;
-            bool winingIncrease = false;
+            const int GAME_MODE_MAIN_LINE_SUBSTRACTION = 2;
+            const string FRAMING_GRID_SYMBOLS = "+--";
+            const string FRAMING_GRID_CORNERS = "+";
+            const string FRAMING_GRID_VERTICAL_LINES = "|";
+            const string RED_APPLE = "\U0001F34E";
+            const string RED_CHERYS = "\U0001F352";
+            const string MANGO = "\U0001F96D";
+            const string ORANGE = "\U0001F34A";
+            const string GRAPES = "\U0001F347";
+
+            Console.OutputEncoding = Encoding.UTF8;
+
             Console.WriteLine("Welcome to Fruits Wars!!\n");
             Console.Write("[3x3=3] [5x5=5] Grid");
             Console.WriteLine("\tTake a option :");
 
             int userGridInput = int.Parse(Console.ReadLine());
+            bool winingIncrease = false;
             if (STANDARD_GRID != userGridInput)
             {
                 Console.Write("[1Line=1],[5Lines=5],[10Lines=10],[12Lines=12]");
@@ -32,40 +45,35 @@ namespace Blako_Slot_maschine
             }
 
             Console.WriteLine("\t How many Lines want you to play?:");
+
             string userPlayLines = Console.ReadLine();
             int playerChoiseLines = Convert.ToInt32(userPlayLines);
+            int rows = userGridInput;
+            int cols = userGridInput;
+
             ConsoleKeyInfo key;
+
             // list for the game standard or another one
             List<int> standardGrid = new List<int> { 1, 3, 6, 8 };
             List<int> extendedGrid = new List<int> { 1, 5, 10, 12 };
             List<int> listGridSwitch = standardGrid;
 
+            string[,] slotsGrid = new string[rows, cols];
+            List<string> fruits = new List<string>();
+            fruits.Add(RED_APPLE);
+            fruits.Add(RED_CHERYS);
+            fruits.Add(MANGO);
+            fruits.Add(ORANGE);
+            fruits.Add(GRAPES);
+            int indexList = fruits.Count;
+            Random randomList = new Random();
+            int totalLines;
+            int totalGameLines;
             int gameCenter = listGridSwitch[0];
             int gameHorizontalLines = listGridSwitch[1];
             int gameVerticalLines = listGridSwitch[2];
             int gameDiagonalLines = listGridSwitch[3];
-            int rows = userGridInput;
-            int cols = userGridInput;
             int balance = CREDIT;
-            int totalLines;
-            int totalGameLines;
-            int centerLineGrid = 1;//For game1 plays center line 
-            
-            string framingGridSymbols = "+--";
-            string framingGridCorners = "+";
-            string framingGridVerticalLines = "|";
-            // utf characters symbols
-            Console.OutputEncoding = Encoding.UTF8;
-
-            string[,] slotsGrid = new string[rows, cols];
-            List<string> fruits = new List<string>();
-            fruits.Add("\U0001F34E"); //red Aplle
-            fruits.Add("\U0001F352"); // red cherys
-            fruits.Add("\U0001F96D");// mango
-            fruits.Add("\U0001F34A");//Orange
-            fruits.Add("\U0001F347");// Wein Trauben
-            int indexList = fruits.Count;
-            Random randomList = new Random();
             // For the game option how many Lines the user Wants to play
             switch (userPlayLines)
             {
@@ -107,55 +115,48 @@ namespace Blako_Slot_maschine
                 default:
                     Console.WriteLine("Next Time enter a valid Number! you play now on main line");
                     gameCenter = playerChoiseLines;
-                    totalLines = 1;
-                    totalGameLines = 1;
+                    totalLines = DEAFAULT_MODE;
+                    totalGameLines = DEAFAULT_MODE;
                     break;
 
 
             }
 
-            //game 1 just centerline 
-            if (userGridInput == 5)
-            {
-                centerLineGrid = userGridInput - 2;
-            }   
-
-
             Console.WriteLine("To Play press Spacebar Key");
-
 
             //Main Game to play
             do
             {
+                
                 key = Console.ReadKey();
                 Console.WriteLine();
                 Console.Clear();
 
                 for (int r = 0; r < rows; r++)
                 {
-                    Console.Write(framingGridSymbols);
+                    Console.Write(FRAMING_GRID_SYMBOLS);
                 }
-                Console.WriteLine(framingGridCorners);
+                Console.WriteLine(FRAMING_GRID_CORNERS);
 
                 for (int i = 0; i < rows; i++)
                 {
 
-                    Console.Write(framingGridVerticalLines);
+                    Console.Write(FRAMING_GRID_VERTICAL_LINES);
 
                     for (int j = 0; j < cols; j++)
                     {
 
                         slotsGrid[i, j] = fruits[randomList.Next(indexList)];
                         Console.Write(slotsGrid[i, j]);
-                        Console.Write(framingGridVerticalLines);
+                        Console.Write(FRAMING_GRID_VERTICAL_LINES);
 
                     }
                     Console.WriteLine();
                     for (int r = 0; r < rows; r++)
                     {
-                        Console.Write(framingGridSymbols);
+                        Console.Write(FRAMING_GRID_SYMBOLS);
                     }
-                    Console.WriteLine(framingGridCorners);
+                    Console.WriteLine(FRAMING_GRID_CORNERS);
 
                 }
                 Console.WriteLine();
@@ -165,6 +166,7 @@ namespace Blako_Slot_maschine
 
                 if (playerChoiseLines == gameCenter)
                 {
+                    int centerLineGrid = userGridInput / GAME_MODE_MAIN_LINE_SUBSTRACTION;
 
                     for (int r = centerLineGrid; r <= centerLineGrid; r++)
                     {
@@ -223,7 +225,7 @@ namespace Blako_Slot_maschine
                         }
                     }
                 }
-                // All  Vertical Lines lines Winnings
+                // All  Vertical Lines lines are Active
                 if (playerChoiseLines != gameCenter)
                 {
 
@@ -253,7 +255,7 @@ namespace Blako_Slot_maschine
                             {
                                 gameWinnings = true;
                                 balance += betTotalLines * 12;
-                                Console.WriteLine($"you  win  X12 Bonus on Vertical-Line {c+1}");
+                                Console.WriteLine($"you  win  X12 Bonus on Vertical-Line {c + 1}");
                             }
                         }
                     }
@@ -298,10 +300,10 @@ namespace Blako_Slot_maschine
                         balance += betTotalLines;
                         Console.WriteLine($"you win on Sekond diagonal Line");
                     }
-                    if ( winingIncrease && rightDiagonalWinnings)
+                    if (winingIncrease && rightDiagonalWinnings)
                     {
                         gameWinnings = true;
-                        balance += betTotalLines *12;
+                        balance += betTotalLines * 12;
                         Console.WriteLine($"you win on Sekond diagonal Line X12 Bonus");
                     }
                 }
