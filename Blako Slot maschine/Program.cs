@@ -15,6 +15,7 @@ namespace Blako_Slot_maschine
             const int DEAFAULT_MODE = 1;
             const int CREDIT = 1000;
             const int BET_PER_LINE = 1;
+            const int FRAMING_GRID_COLS = 5;
             const int GAME_MODE_MAIN_LINE_SUBSTRACTION = 2;
             const string FRAMING_GRID_SYMBOLS = "+--";
             const string FRAMING_GRID_CORNERS = "+";
@@ -28,28 +29,38 @@ namespace Blako_Slot_maschine
             Console.OutputEncoding = Encoding.UTF8;
 
             Console.WriteLine("Welcome to Fruits Wars!!\n");
-            Console.Write("[3x3=3] [5x5=5] Grid");
-            Console.WriteLine("\tTake a option :");
-
-            int userGridInput = int.Parse(Console.ReadLine());
-            bool winingIncrease = false;
-            if (STANDARD_GRID != userGridInput)
+            Console.Write("3x5 Grid Are Standard Game\n");
+            Console.WriteLine("Enter your Grid Size starting from 3 just odd Size");
+            string userGridChoice = Console.ReadLine();
+            int gridSize;
+            bool userInputGridChoice = int.TryParse(userGridChoice,out gridSize);
+            if (!userInputGridChoice)
             {
-                Console.Write("[1Line=1],[5Lines=5],[10Lines=10],[12Lines=12]");
+                Console.WriteLine("Please enter a Valid Number not a Letter !!");
+            }
+            Console.WriteLine("\tTake Lines 1 to 12 option :");
+            string userPlayLines = Console.ReadLine();
+            int playerChoiseLines;
+            bool userInputPlayLInes = int.TryParse(userPlayLines, out playerChoiseLines);
+            if (!userInputPlayLInes)
+            {
+                Console.WriteLine("Please enter a Valid Number not a Letter !!");
+
+            }
+            int rows = gridSize;
+            int cols = FRAMING_GRID_COLS;
+
+            bool winingIncrease = false;
+            if (playerChoiseLines > STANDARD_GRID)
+            {
+                Console.WriteLine("They are on Some Lines Bonuses");
                 winingIncrease = true;
             }
             else
             {
 
-                Console.Write("[1Line=1],[3Lines=3],[6Lines=6],[8Lines=8]");
+                Console.Write("No Bonuses on standard game");
             }
-
-            Console.WriteLine("\t How many Lines want you to play?:");
-
-            string userPlayLines = Console.ReadLine();
-            int playerChoiseLines = Convert.ToInt32(userPlayLines);
-            int rows = userGridInput;
-            int cols = userGridInput;
 
             ConsoleKeyInfo key;
 
@@ -75,64 +86,67 @@ namespace Blako_Slot_maschine
             int gameDiagonalLines = listGridSwitch[3];
             int balance = CREDIT;
             // For the game option how many Lines the user Wants to play
-            switch (userPlayLines)
-            {
-                case "1":
-                    listGridSwitch = standardGrid;
-                    totalLines = listGridSwitch[0];
-                    totalGameLines = listGridSwitch[0];
-                    break;
-                case "3":
-                    listGridSwitch = standardGrid;
-                    totalLines = listGridSwitch[1];
-                    totalGameLines = listGridSwitch[1];
-                    break;
-                case "6":
-                    listGridSwitch = standardGrid;
-                    totalLines = listGridSwitch[2];
-                    totalGameLines = listGridSwitch[2];
-                    break;
-                case "8":
-                    listGridSwitch = standardGrid;
-                    totalLines = listGridSwitch[3];
-                    totalGameLines = listGridSwitch[3];
-                    break;
-                case "5":
-                    listGridSwitch = extendedGrid;
-                    totalLines = listGridSwitch[1];
-                    totalGameLines = listGridSwitch[1];
-                    break;
-                case "10":
-                    listGridSwitch = extendedGrid;
-                    totalLines = listGridSwitch[2];
-                    totalGameLines = listGridSwitch[2];
-                    break;
-                case "12":
-                    listGridSwitch = extendedGrid;
-                    totalLines = listGridSwitch[3];
-                    totalGameLines = listGridSwitch[3];
-                    break;
-                default:
-                    Console.WriteLine("Next Time enter a valid Number! you play now on main line");
-                    gameCenter = playerChoiseLines;
-                    totalLines = DEAFAULT_MODE;
-                    totalGameLines = DEAFAULT_MODE;
-                    break;
+
+           
+
+                switch (userPlayLines)
+                {
+                    case "1":
+                        listGridSwitch = standardGrid;
+                        totalLines = listGridSwitch[0];
+                        totalGameLines = listGridSwitch[0];
+                        break;
+                    case "3":
+                        listGridSwitch = standardGrid;
+                        totalLines = listGridSwitch[1];
+                        totalGameLines = listGridSwitch[1];
+                        break;
+                    case "6":
+                        listGridSwitch = standardGrid;
+                        totalLines = listGridSwitch[2];
+                        totalGameLines = listGridSwitch[2];
+                        break;
+                    case "8":
+                        listGridSwitch = standardGrid;
+                        totalLines = listGridSwitch[3];
+                        totalGameLines = listGridSwitch[3];
+                        break;
+                    case "5":
+                        listGridSwitch = extendedGrid;
+                        totalLines = listGridSwitch[1];
+                        totalGameLines = listGridSwitch[1];
+                        break;
+                    case "10":
+                        listGridSwitch = extendedGrid;
+                        totalLines = listGridSwitch[2];
+                        totalGameLines = listGridSwitch[2];
+                        break;
+                    case "12":
+                        listGridSwitch = extendedGrid;
+                        totalLines = listGridSwitch[3];
+                        totalGameLines = listGridSwitch[3];
+                        break;
+                    default:
+                        Console.WriteLine("Next Time enter a valid Number! you play now on main line");
+                        gameCenter = STANDARD_GRID;
+                        totalLines = DEAFAULT_MODE;
+                        totalGameLines = DEAFAULT_MODE;
+                        break;
 
 
-            }
+                }
+            
 
             Console.WriteLine("To Play press Spacebar Key");
 
             //Main Game to play
             do
             {
-                
                 key = Console.ReadKey();
                 Console.WriteLine();
                 Console.Clear();
 
-                for (int r = 0; r < rows; r++)
+                for (int r = 0; r < cols; r++)
                 {
                     Console.Write(FRAMING_GRID_SYMBOLS);
                 }
@@ -152,7 +166,7 @@ namespace Blako_Slot_maschine
 
                     }
                     Console.WriteLine();
-                    for (int r = 0; r < rows; r++)
+                    for (int r = 0; r < cols; r++)
                     {
                         Console.Write(FRAMING_GRID_SYMBOLS);
                     }
@@ -166,7 +180,7 @@ namespace Blako_Slot_maschine
 
                 if (playerChoiseLines == gameCenter)
                 {
-                    int centerLineGrid = userGridInput / GAME_MODE_MAIN_LINE_SUBSTRACTION;
+                    int centerLineGrid = gridSize / GAME_MODE_MAIN_LINE_SUBSTRACTION;
 
                     for (int r = centerLineGrid; r <= centerLineGrid; r++)
                     {
