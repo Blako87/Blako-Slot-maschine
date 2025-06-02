@@ -11,303 +11,71 @@ namespace Blako_Slot_maschine
     {
         static void Main(string[] args)
         {
-            const int STANDARD_GRID = 3;
-            const int CREDIT = 1000;
-            const int BET_PER_LINE = 1;
-            const int FRAMING_GRID_COLS = 5;
-            const int DIAGONAL_LINES = 2;
-            const int GAME_MODE_MAIN_LINE_SUBSTRACTION = 2;
-            const int USER_GAME_CHOISE_CENTER = 1;
-            const int USER_GAME_CHOICE_HORIZONTAL = 2;
-            const int USER_GAME_CHOICE_VERTICAL = 3;
-            const int USER_GAME_CHOICE_DIAGONAL = 4;
-            const int USER_GAME_CHOICE_ALL_LINES = 5;
-            const string GAME_CENTER = "Center Line = 1";
-            const string GAME_HORIZONTAL_LINES = "Horizontal Lines = 2";
-            const string GAME_VERTICL_LINES = "Vertical Lines = 3";
-            const string GAME_DIAGONAL_LINES = "Diagonal Lines = 4";
-            const string GAME_ALL_LINES = "All Lines = 5";
-            const string FRAMING_GRID_SYMBOLS = "+--";
-            const string FRAMING_GRID_CORNERS = "+";
-            const string FRAMING_GRID_VERTICAL_LINES = "|";
-            const string RED_APPLE = "\U0001F34E";
-            const string RED_CHERYS = "\U0001F352";
-            const string MANGO = "\U0001F96D";
-            const string ORANGE = "\U0001F34A";
-            const string GRAPES = "\U0001F347";
-            // Encoding to be able to show symbols
+
             Console.OutputEncoding = Encoding.UTF8;
-            // Welcome message and user Gridgame choice size
-            Console.WriteLine("Welcome to Fruits Wars!!\n");
-            Console.Write("3x5 Grid Are Standard Game\n");
-            Console.WriteLine("Enter your Grid Size starting from 3 to 5,7 ,9.. just odd Size");
-            bool userInputGridChoice = false;
-            int gridSize = 0;
-            while (!userInputGridChoice)
-            {
-
-                string userGridChoice = Console.ReadLine();
-                if (int.TryParse(userGridChoice, out gridSize) && gridSize >= 3 && Math.Abs(gridSize % 2) == 1)
-                {
-                    userInputGridChoice = true;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter an odd number like 3, 5, 7, 9...");
-                }
-
-            }
-
-            // User Game Choise Playlines
-            Console.WriteLine($"Take Game option: {GAME_CENTER}, {GAME_HORIZONTAL_LINES}, {GAME_VERTICL_LINES}, {GAME_DIAGONAL_LINES}, {GAME_ALL_LINES} !");
-            int playerChoiseGames = 0;
-            bool userInputPlayGames = false;
-            while (!userInputPlayGames)
-            {
-                string userPlayGames = Console.ReadLine();
-                if (int.TryParse(userPlayGames, out playerChoiseGames))
-                {
-                    userInputPlayGames = true;
-                }
-                else
-                {
-                    Console.WriteLine("Invalid input. Please enter a valid number for game option.");
-                }
-            }
-            // Grid Variables´Size for user Choice 
-            int rows = gridSize;
-            int cols = FRAMING_GRID_COLS;
-
             ConsoleKeyInfo key;
-            string[,] slotsGrid = new string[rows, cols];
-            List<string> fruits = new List<string>();
-            fruits.Add(RED_APPLE);
-            fruits.Add(RED_CHERYS);
-            fruits.Add(MANGO);
-            fruits.Add(ORANGE);
-            fruits.Add(GRAPES);
-            int indexList = fruits.Count;
-            Random randomList = new Random();
-            // Validating Winning Bonuses
-            bool winingIncrease = false;
-            if (playerChoiseGames > STANDARD_GRID)
-            {
-                Console.WriteLine("They are on Some Lines Bonuses");
-                winingIncrease = true;
-            }
-            else
-            {
 
-                Console.WriteLine(" Bonus just by playing all Lines !!");
-            }
-            Console.WriteLine("To Play press Spacebar Key");
-            int totalLines = 0;
-            if (USER_GAME_CHOICE_ALL_LINES == playerChoiseGames)
-            {
+            GameUi.WelcomeMessage();
 
-                totalLines = gridSize + FRAMING_GRID_COLS + DIAGONAL_LINES;
+            int rows = GameUi.GetPlayerGridSizeInput();
+            GameUi.AskUserForPlayLines();
+            int playerChoiseGames = GameUi.GetPlayerGameLines();
+            int cols = GameLogic.FRAMING_GRID_COLS;
+            GameUi.GamestatusMessage("Please Press Spacebar key on your keyboard for play or ESC to quit!");
+            int totalLines = GameLogic.UserBetLines(rows, playerChoiseGames);
 
-            }
-            if (USER_GAME_CHOISE_CENTER == playerChoiseGames)
-            {
-                totalLines = BET_PER_LINE;
-            }
-            else
-            {
-                totalLines = gridSize;
-            }
-            int balance = CREDIT;
+            int balance = GameLogic.CREDIT;
+            bool winnings = false;
             //Main Game to play
             do
             {
+
                 key = Console.ReadKey();
                 Console.WriteLine();
                 Console.Clear();
+                string[,] slotsGrid = GameLogic.GetSlotGridRandom(rows, cols);
+                GameUi.DisplayGrid(slotsGrid);
+                GameUi.ShowBalance(balance);
+                GameUi.GamestatusMessage($"Aktual totallines:{totalLines}");
+                bool gameCenterWinnings = GameLogic.CenterLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                bool gameHorizontalWinnings = GameLogic.HorizontalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                bool gameVerticalWinnings = GameLogic.VerticalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                bool gameDiagonalWinnings = GameLogic.DiagonalLineWinnings(slotsGrid, rows, playerChoiseGames);
+                balance = GameLogic.UserGameBalance(winnings, rows, playerChoiseGames, balance);
 
-                for (int r = 0; r < cols; r++)
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOISE_CENTER && gameCenterWinnings)
                 {
-                    Console.Write(FRAMING_GRID_SYMBOLS);
-                }
-                Console.WriteLine(FRAMING_GRID_CORNERS);
-
-                for (int i = 0; i < rows; i++)
-                {
-
-                    Console.Write(FRAMING_GRID_VERTICAL_LINES);
-
-                    for (int j = 0; j < cols; j++)
-                    {
-
-                        slotsGrid[i, j] = fruits[randomList.Next(indexList)];
-                        Console.Write(slotsGrid[i, j]);
-                        Console.Write(FRAMING_GRID_VERTICAL_LINES);
-
-                    }
-                    Console.WriteLine();
-                    for (int r = 0; r < cols; r++)
-                    {
-                        Console.Write(FRAMING_GRID_SYMBOLS);
-                    }
-                    Console.WriteLine(FRAMING_GRID_CORNERS);
+                    winnings = true;
+                    GameUi.GamestatusMessage($"Winn on Centerline{gameCenterWinnings}");
 
                 }
-                Console.WriteLine();
-                // Center Line Winings
-                bool gameWinnings = false;
-                int betTotalLines = totalLines * BET_PER_LINE;
-
-                if (playerChoiseGames == USER_GAME_CHOISE_CENTER)
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_HORIZONTAL && gameHorizontalWinnings)
                 {
-                    int centerLineGrid = gridSize / GAME_MODE_MAIN_LINE_SUBSTRACTION;
-
-                    for (int r = centerLineGrid; r <= centerLineGrid; r++)
-                    {
-                        bool winnings = true;
-                        string firstSymbol = slotsGrid[r, centerLineGrid];
-
-                        for (int c = 0; c < cols; c++)
-                        {
-                            if (slotsGrid[r, c] != firstSymbol)
-                            {
-                                winnings = false;
-                                break;
-
-                            }
-                        }
-                        if (winnings)
-                        {
-                            gameWinnings = true;
-                            balance += betTotalLines;
-                            Console.WriteLine($"you win on H-Line{r + 1}");
-                        }
-
-                    }
-
+                    GameUi.GamestatusMessage($"Congratulation you win!!");
+                    winnings = true;
                 }
-                // All  Horizontal Lines Are Active
-                if (playerChoiseGames == USER_GAME_CHOICE_HORIZONTAL || playerChoiseGames == USER_GAME_CHOICE_ALL_LINES)
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_VERTICAL && gameVerticalWinnings)
                 {
-
-
-                    for (int r = 0; r < rows; r++)
-                    {
-                        bool winnings = true;
-                        string firstSymbol = slotsGrid[r, 0];
-
-                        for (int c = 1; c < cols; c++)
-                        {
-                            if (slotsGrid[r, c] != firstSymbol)
-                            {
-                                winnings = false;
-                                break;
-
-                            }
-                        }
-                        if (winnings)
-                        {
-                            gameWinnings = true;
-                            balance += betTotalLines;
-                            Console.WriteLine($"you win on H-Line{r + 1}");
-                        }
-
-                    }
+                    GameUi.GamestatusMessage($"Congratulation you win!!");
+                    winnings = true;
                 }
-
-                // All  Vertical Lines lines are Active
-
-                if (playerChoiseGames == USER_GAME_CHOICE_VERTICAL || playerChoiseGames == USER_GAME_CHOICE_ALL_LINES)
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_DIAGONAL && gameDiagonalWinnings)
                 {
-
-                    for (int c = 0; c < cols; c++)
-                    {
-                        bool winnings = true;
-                        string firstSymbol = slotsGrid[0, c];
-                        for (int r = 1; r < rows; r++)
-                        {
-                            if (slotsGrid[r, c] != firstSymbol)
-                            {
-                                winnings = false;
-                                break;
-
-                            }
-                        }
-                        if (winnings)
-                        {
-                            gameWinnings = true;
-                            balance += betTotalLines;
-                            Console.WriteLine($"you win on V| Line{c + 1}");
-                        }
-                        if (winingIncrease && winnings)
-                        {
-                            gameWinnings = true;
-                            balance += betTotalLines * 12;
-                            Console.WriteLine($"you  win  X12 Bonus on Vertical-Line {c + 1}");
-                        }
-                    }
+                    GameUi.GamestatusMessage($"Congratulation you win!!");
+                    winnings = true;
                 }
-
-                // left diagonal Line
-                bool diagonalLeftWinnings = true;
-                if (playerChoiseGames == USER_GAME_CHOICE_DIAGONAL || playerChoiseGames == USER_GAME_CHOICE_ALL_LINES)
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_ALL_LINES && gameDiagonalWinnings && gameHorizontalWinnings && gameVerticalWinnings)
                 {
-
-                    for (int r = 1; r < rows; r++)
-                    {
-                        string firstSymbol = slotsGrid[0, 0];
-                        if (slotsGrid[r, r] != firstSymbol)
-                        {
-                            diagonalLeftWinnings = false;
-                            break;
-
-                        }
-
-                    }
-                    if (diagonalLeftWinnings)
-                    {
-                        gameWinnings = true;
-                        balance += betTotalLines;
-                        Console.WriteLine($"you win on Main diagonal Line");
-                    }
-                    // right diagonal Line
-                    bool rightDiagonalWinnings = true;
-                    for (int r = 1; r < rows; r++)
-                    {
-                        string firstSymbol = slotsGrid[0, rows - 1];
-                        if (slotsGrid[r, rows - 1 - r] != firstSymbol)
-                        {
-                            rightDiagonalWinnings = false;
-                            break;
-
-                        }
-                    }
-                    if (rightDiagonalWinnings)
-                    {
-                        gameWinnings = true;
-                        balance += betTotalLines;
-                        Console.WriteLine($"you win on Sekond diagonal Line");
-                    }
-                    if (winingIncrease && rightDiagonalWinnings)
-                    {
-                        gameWinnings = true;
-                        balance += betTotalLines * 12;
-                        Console.WriteLine($"you win on Sekond diagonal Line X12 Bonus");
-                    }
+                    GameUi.GamestatusMessage($"Congratulation you win!!");
+                    winnings = true;
                 }
-
-
-                if (gameWinnings)
+                if(!gameCenterWinnings&&!gameDiagonalWinnings&&!gameHorizontalWinnings&&!gameVerticalWinnings)
                 {
-
-                    Console.WriteLine($"Your balance ==>{balance}<== ");
-
+                    GameUi.GamestatusMessage($"You Lose try again!{winnings}");
+                    winnings = false;
+                  
                 }
-                else
-                {
-                    Console.WriteLine("you lose");
-                    balance -= betTotalLines;
-                    Console.WriteLine($"your balance ==>{balance}<==");
-                }
-
+                
 
             } while (Math.Abs(balance) >= totalLines && key.Key == ConsoleKey.Spacebar);
 
