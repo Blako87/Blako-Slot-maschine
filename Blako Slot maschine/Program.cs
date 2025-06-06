@@ -25,7 +25,8 @@ namespace Blako_Slot_maschine
             int totalLines = GameLogic.UserBetLines(rows, playerChoiseGames);
 
             int balance = GameLogic.CREDIT;
-            bool winnings = false;
+            
+            
             //Main Game to play
             do
             {
@@ -37,29 +38,50 @@ namespace Blako_Slot_maschine
                 GameUi.DisplayGrid(slotsGrid);
                 GameUi.ShowBalance(balance);
                 GameUi.GamestatusMessage($"Aktual totallines:{totalLines}");
-                bool gameCenterWinnings = GameLogic.CenterLinesWinnings(slotsGrid, rows, playerChoiseGames);
-                bool gameHorizontalWinnings = GameLogic.HorizontalLinesWinnings(slotsGrid, rows, playerChoiseGames);
-                bool gameVerticalWinnings = GameLogic.VerticalLinesWinnings(slotsGrid, rows, playerChoiseGames);
-                bool gameDiagonalWinnings = GameLogic.DiagonalLineWinnings(slotsGrid, rows, playerChoiseGames);
-                balance = GameLogic.UserGameBalance(winnings, rows, playerChoiseGames, balance);
-
-                if (playerChoiseGames == GameLogic.USER_GAME_CHOISE_CENTER && gameCenterWinnings)
+                bool gameCenterWinnings = false, gameHorizontalWinnings = false, gameVerticalWinnings = false, gameDiagonalWinnings = false;
+                bool winnings = false;
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOISE_CENTER)
+                {
+                     gameCenterWinnings = GameLogic.CenterLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                   
+                }
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_HORIZONTAL)
+                {
+                    gameHorizontalWinnings = GameLogic.HorizontalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                }
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_VERTICAL)
+                {
+                    gameVerticalWinnings = GameLogic.VerticalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                }
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_DIAGONAL)
+                {
+                    gameDiagonalWinnings = GameLogic.DiagonalLineWinnings(slotsGrid, rows, playerChoiseGames);
+                }
+                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_ALL_LINES)
+                {
+                    gameHorizontalWinnings = GameLogic.HorizontalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                    gameVerticalWinnings = GameLogic.VerticalLinesWinnings(slotsGrid, rows, playerChoiseGames);
+                    gameDiagonalWinnings = GameLogic.DiagonalLineWinnings(slotsGrid, rows, playerChoiseGames);
+                }
+                                                               
+                
+                if (gameCenterWinnings)
                 {
                     winnings = true;
                     GameUi.GamestatusMessage($"Winn on Centerline{gameCenterWinnings}");
 
                 }
-                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_HORIZONTAL && gameHorizontalWinnings)
+                if (gameHorizontalWinnings)
                 {
                     GameUi.GamestatusMessage($"Congratulation you win!!");
                     winnings = true;
                 }
-                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_VERTICAL && gameVerticalWinnings)
+                if (gameVerticalWinnings)
                 {
                     GameUi.GamestatusMessage($"Congratulation you win!!");
                     winnings = true;
                 }
-                if (playerChoiseGames == GameLogic.USER_GAME_CHOICE_DIAGONAL && gameDiagonalWinnings)
+                if (gameDiagonalWinnings)
                 {
                     GameUi.GamestatusMessage($"Congratulation you win!!");
                     winnings = true;
@@ -75,7 +97,8 @@ namespace Blako_Slot_maschine
                     winnings = false;
                   
                 }
-                
+                balance = GameLogic.UserGameBalance(winnings, rows, playerChoiseGames, balance);
+
 
             } while (Math.Abs(balance) >= totalLines && key.Key == ConsoleKey.Spacebar);
 
